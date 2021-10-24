@@ -7,8 +7,8 @@ RUN yum -y update \
 
 RUN npm install --build-from-source canvas@next
 RUN npm install \
-chartjs-node-canvas \
-chart.js
+# chartjs-node-canvas \
+# chart.js
 
 COPY ./ package* ./
 RUN npm install
