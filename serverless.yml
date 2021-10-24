@@ -63,21 +63,33 @@ provider:
 #    - exclude-me.js
 #    - exclude-me-dir/**
 
+package:
+  exclude: 
+    - 'output/**'
+
 plugins:
   - serverless-plugin-common-excludes
-  #- serverless-plugin-include-dependencies
+  # - serverless-plugin-include-dependencies
+
+layers:
+  canvas:
+    package:
+      artifact: ./output/node_modules.zip
 
 functions:
   hello:
-    # handler: handler.hello
-    image:
-      name: chart
-      command: functions/get-chart/handler.getChart
+    handler: functions/get-chart/handler.getChart
+    # image:
+    #   name: chart
+    #   command: functions/get-chart/handler.getChart
     memorySize: 256   
     events:
       - http:
           path: hello
           method: post
+    layers:
+      - { Ref: CanvasLambdaLayer }
+
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
 #    Check the event documentation for details
