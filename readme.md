@@ -15,3 +15,8 @@
   Response time under 1 second in both cases after warmed
   Layer size 40+ MB
   Lambda size 40+ KB
+
+  # TODO
+  - cleanup build script to copy all libs from array list of names
+  - rename help function to getChart
+  - genreal optimisations and cleanup
