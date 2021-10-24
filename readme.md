@@ -20,3 +20,5 @@
   - cleanup build script to copy all libs from array list of names
   - rename help function to getChart
   - genreal optimisations and cleanup
+  - add serverless warmup plugin
+  - set up local debugging
