@@ -6,7 +6,8 @@ RUN yum -y update \
 && yum install -y nodejs gcc-c++ cairo-devel libjpeg-turbo-devel pango-devel giflib-devel
 
 RUN npm install --build-from-source canvas@next
-RUN npm install \
+RUN npm install 
+# \
 # chartjs-node-canvas \
 # chart.js
 
