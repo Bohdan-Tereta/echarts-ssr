@@ -28,8 +28,8 @@ provider:
   ecr:
     # In this section you can define images that will be built locally and uploaded to ECR
     images:
-      appimage:
-        path: ./
+      chart:
+        path: ./functions/get-chart
 # you can overwrite defaults here
 #  stage: dev
 #  region: us-east-1
@@ -71,8 +71,8 @@ functions:
   hello:
     # handler: handler.hello
     image:
-      name: appimage
-      command: handler.hello
+      name: chart
+      command: functions/get-chart/handler.getChart
     memorySize: 256   
     events:
       - http:

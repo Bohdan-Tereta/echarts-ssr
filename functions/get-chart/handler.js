@@ -2,7 +2,7 @@
 
 const { getChart } = require("./get-chart");
 
-module.exports.hello = async (event) => {
+module.exports.getChart = async (event) => {
   return {
     statusCode: 200,
     body: JSON.stringify(

@@ -8,9 +8,9 @@
   },
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "canvas": "2.6.1",
-    "echarts": "^5.2.1",
-    "jsdom": "^18.0.0"
+  "dependencies": {},
+  "devDependencies": {
+    "serverless-plugin-common-excludes": "^4.0.0",
+    "serverless-plugin-include-dependencies": "^5.0.0"
   }
 }
