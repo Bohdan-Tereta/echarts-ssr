@@ -25,3 +25,19 @@
 
   # Misc Info
   Sveltekit demo app `npm init svelte@next my-app`
+  https://dev.to/juranki/diy-sveltekit-cdk-adapter-3enp
+  Debugger: `node --inspect $(npm bin)/sls offline start`
+
+  https://stackoverflow.com/questions/41572237/how-can-we-use-serverless-yml-to-create-an-aws-s3-bucket-and-add-a-file-to-it
+  https://github.com/thenikso/adapter-serverless/blob/main/src/serverless.js
+
+  https://forum.serverless.com/t/how-to-create-api-gateway-with-lambda-proxy-integration/4131
+
+  https://github.com/yarbsemaj/sveltekit-adapter-lambda/tree/master/src
+
+  try 
+  {proxy+} replace with {proxy*} to see if it solves index page path on aws
+  try all 3 plugins
+  base in svelte.config doesn't work
+  server-side data fetch returns "Request is not defined"
+  

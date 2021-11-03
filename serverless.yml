@@ -64,12 +64,14 @@ provider:
 #    - exclude-me-dir/**
 
 package:
-  exclude: 
-    - 'output/**'
+  individually: true
+  exclude:
+    - "*/**"
 
 plugins:
-  - serverless-plugin-common-excludes
+  # - serverless-plugin-common-excludes
   # - serverless-plugin-include-dependencies
+  - serverless-offline
 
 layers:
   canvas:
@@ -89,6 +91,25 @@ functions:
           method: post
     layers:
       - { Ref: CanvasLambdaLayer }
+    package:
+      include:
+        - functions/get-chart/**
+      exclude:
+        - functions/get-chart/node_modules/**
+  sveltekit:
+    handler: functions/sveltekit/my-app/adapter/content/server-bundle/index.handler
+    #   .
+    # image:
+    #   name: chart
+    #   command: functions/get-chart/handler.getChart
+    memorySize: 256   
+    events:
+      - http:
+          path: sveltekit/{proxy+}
+          method: any
+    package:
+      include:
+        - functions/sveltekit/my-app/adapter/content/server-bundle/**
 
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events

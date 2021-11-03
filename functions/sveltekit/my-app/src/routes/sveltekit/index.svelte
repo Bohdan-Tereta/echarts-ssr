@@ -3,6 +3,8 @@
 </script>
 
 <script lang="ts">
+import { assets } from '$app/paths';
+
 	import Counter from '$lib/Counter.svelte';
 </script>
 
@@ -14,7 +16,7 @@
 	<h1>
 		<div class="welcome">
 			<picture>
-				<source srcset="svelte-welcome.webp" type="image/webp" />
+				<source srcset={`${assets}/svelte-welcome.webp`} type="image/webp" />
 				<img src="svelte-welcome.png" alt="Welcome" />
 			</picture>
 		</div>

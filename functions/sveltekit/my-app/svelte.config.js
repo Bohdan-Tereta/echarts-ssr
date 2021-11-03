@@ -1,4 +1,10 @@
 import preprocess from 'svelte-preprocess';
+import adapter  from './adapter/index.js'
+import adapter2 from '@nikso/adapter-serverless';
+
+import serverless from '@yarbsemaj/adapter-lambda';
+
+console.log(adapter2())
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -8,8 +14,17 @@ const config = {
 
 	kit: {
 		// hydrate the <div id="svelte"> element in src/app.html
-		target: '#svelte'
-	}
+		target: '#svelte',
+    adapter:  adapter,
+    ssr: true,
+    paths: {
+      base: '/dev/sveltekit',
+      assets: 'http://127.0.0.1:5500/functions/sveltekit/my-app/adapter/content/static'
+    }
+	},
+  vite: {
+    // base: '/dev/sveltekit1',
+  }
 };
 
 export default config;

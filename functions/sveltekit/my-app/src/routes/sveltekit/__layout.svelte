@@ -1,11 +1,14 @@
 <script lang="ts">
+import { page } from '$app/stores';
+
 	import Header from '$lib/header/Header.svelte';
-	import '../app.css';
+	import '../../app.css';
 </script>
 
 <Header />
 
 <main>
+  {$page.path}
 	<slot />
 </main>
 

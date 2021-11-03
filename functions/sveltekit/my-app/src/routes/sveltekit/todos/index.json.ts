@@ -5,7 +5,12 @@ import type { Locals } from '$lib/types';
 // GET /todos.json
 export const get: RequestHandler<Locals> = async (request) => {
 	// request.locals.userid comes from src/hooks.js
-	const response = await api(request, `todos/${request.locals.userid}`);
+  try {
+    const response = await api(request, `todos/${request.locals.userid}`);
+  } catch (e) {
+    console.log(e)
+  }
+
 
 	if (response.status === 404) {
 		// user hasn't created a todo list.
