@@ -1,6 +1,6 @@
   # Prerequisites:
   install serverless with `npm install -g serverless`
-  switch to node version 14 (optional) vian nvm `nvm use 14`
+  switch to node version 14 (optional) via nvm `nvm use 14`
   # How to run 
   For layer version (default), run ./build.sh first to build layer
   deploy: `serverless deploy`
@@ -22,3 +22,6 @@
   - genreal optimisations and cleanup
   - add serverless warmup plugin
   - set up local debugging
+
+  # Misc Info
+  Sveltekit demo app `npm init svelte@next my-app`
