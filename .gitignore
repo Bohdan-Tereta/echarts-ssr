@@ -7,3 +7,5 @@ jspm_packages
 output/
 .cache
 .DS_Store
+.vercel_build_output
+.netlify

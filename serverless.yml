@@ -97,7 +97,8 @@ functions:
       exclude:
         - functions/get-chart/node_modules/**
   sveltekit:
-    handler: functions/sveltekit/my-app/adapter/content/server-bundle/index.handler
+    #handler: functions/sveltekit/my-app/.vercel_build_output/functions/node/render/index.default
+    handler: functions/sveltekit/my-app/.netlify/functions-internal/__render.handler
     #   .
     # image:
     #   name: chart
@@ -109,7 +110,8 @@ functions:
           method: any
     package:
       include:
-        - functions/sveltekit/my-app/adapter/content/server-bundle/**
+       # - functions/sveltekit/my-app/.vercel_build_output/functions/node/render/**
+       - functions/sveltekit/my-app/.netlify/functions-internal/**
 
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events

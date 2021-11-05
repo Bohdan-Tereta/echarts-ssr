@@ -4,7 +4,10 @@ import adapter2 from '@nikso/adapter-serverless';
 
 import serverless from '@yarbsemaj/adapter-lambda';
 
-console.log(adapter2())
+import vercel from '@sveltejs/adapter-vercel' ;
+
+import netlify from '@sveltejs/adapter-netlify'
+
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -15,7 +18,7 @@ const config = {
 	kit: {
 		// hydrate the <div id="svelte"> element in src/app.html
 		target: '#svelte',
-    adapter:  adapter,
+    adapter:  netlify(),
     ssr: true,
     paths: {
       base: '/dev/sveltekit',
@@ -23,7 +26,7 @@ const config = {
     }
 	},
   vite: {
-    // base: '/dev/sveltekit1',
+     base: '/dev/sveltekit',
   }
 };
 
