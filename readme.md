@@ -76,3 +76,17 @@ add nginx or cloudfront alt 0 1 01 0 gateway rule
 
 https://docs.aws.amazon.com/de_de/apigateway/latest/developerguide/http-api-vs-rest.html
 https://stackoverflow.com/questions/46857335/how-to-remove-stage-from-urls-for-aws-lambda-functions-serverless-framework
+
+
+
+    path: path.replace(/.*\/sveltekit\//, '/').replace(/.*\/sveltekit$/, '/'),
+
+## How to run: 
+- for sveltekit function please do the following: 
+- cd functions/sveltekit/handler
+- run ./replace.sh
+- this will patch vercel module with proper lambda handler for aws
+- cd functions/sveltekit/my-app && npm run build
+cd root and sls offline
+turn on proxy by cd proxy and node index.js
+app on 3000, p 3001

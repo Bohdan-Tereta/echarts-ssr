@@ -1,6 +1,5 @@
 import type { EndpointOutput, Request } from '@sveltejs/kit';
 import type { Locals } from '$lib/types';
-import fetch from 'isomorphic-unfetch';
 
 /*
 	This module is used by the /todos.json and /todos/[uid].json
@@ -24,7 +23,7 @@ export async function api(
 	if (!request.locals.userid) {
 		return { status: 401 };
 	}
-console.log('d', request)
+
 	const res = await fetch(`${base}/${resource}`, {
 		method: request.method,
 		headers: {

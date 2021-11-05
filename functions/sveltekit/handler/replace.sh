@@ -1,0 +1,1 @@
+cp ./entry.js ../my-app/node_modules/@sveltejs/adapter-vercel/files/entry.js

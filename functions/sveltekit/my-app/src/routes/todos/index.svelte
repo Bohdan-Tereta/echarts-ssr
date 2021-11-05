@@ -1,12 +1,9 @@
 <script context="module" lang="ts">
 	import { enhance } from '$lib/form';
 	import type { Load } from '@sveltejs/kit';
-  import fetch from 'isomorphic-unfetch';
 
 	// see https://kit.svelte.dev/docs#loading
 	export const load: Load = async ({ fetch }) => {
-    const res1 = await fetch('/todos.json');
-console.log(res1)
 		const res = await fetch('/todos.json');
 
 		if (res.ok) {
@@ -24,7 +21,6 @@ console.log(res1)
 		};
 	};
 </script>
-
 
 <script lang="ts">
 	import { scale } from 'svelte/transition';

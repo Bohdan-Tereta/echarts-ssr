@@ -18,15 +18,17 @@ const config = {
 	kit: {
 		// hydrate the <div id="svelte"> element in src/app.html
 		target: '#svelte',
-    adapter:  netlify(),
+    adapter:  vercel(),
     ssr: true,
     paths: {
-      base: '/dev/sveltekit',
-      assets: 'http://127.0.0.1:5500/functions/sveltekit/my-app/adapter/content/static'
+      // base: '/dev/sveltekit',
+      assets: 'http://127.0.0.1:5500/functions/sveltekit/my-app/.vercel_build_output/static'
+      //assets: 'http://127.0.0.1:5500/functions/sveltekit/my-app/adapter/content/static' // vercel
+      //assets: 'http://127.0.0.1:5500/functions/sveltekit/my-app/.svelte-kit/output/client'
     }
 	},
   vite: {
-     base: '/dev/sveltekit',
+     // base: '/dev/sveltekit',
   }
 };
 
