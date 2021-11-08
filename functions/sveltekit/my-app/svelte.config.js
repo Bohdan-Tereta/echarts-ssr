@@ -18,7 +18,15 @@ const config = {
 	kit: {
 		// hydrate the <div id="svelte"> element in src/app.html
 		target: '#svelte',
-    adapter:  vercel(),
+    adapter:  vercel({
+      esbuild(defaultOptions) {
+        return {
+          ...defaultOptions,
+          minify: true,
+          sourcemap: true
+        };
+      }
+    }),
     ssr: true,
     paths: {
       // base: '/dev/sveltekit',

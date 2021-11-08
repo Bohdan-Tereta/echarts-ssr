@@ -90,3 +90,16 @@ https://stackoverflow.com/questions/46857335/how-to-remove-stage-from-urls-for-a
 cd root and sls offline
 turn on proxy by cd proxy and node index.js
 app on 3000, p 3001
+
+functions/sveltekit/my-app/.svelte-kit/output/server/app.js - put breakpoints here
+
+limitations: root path in svelte not possible as gateway does use it for other purpose, move root path page to some other route, map on cludfront / proxy level
+put static in subfolder under static for easier rules of proxy
+
+debug local: run `npm run offline` + Attach in vscode
+or
+run `Launch via NPM` in vscode 
+
+3001 - app
+3000/dev/sveltekit - lambdas
+8081 - static

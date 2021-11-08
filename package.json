@@ -8,7 +8,7 @@
     "debug": "node --inspect node_modules/serverless/bin/serverless offline -s dev",
     "proxy": "node ./proxy/express.js",
     "http-server": "http-server ./functions/sveltekit/my-app/.vercel_build_output/static -p 8081 ",
-    "sls-offline": "sls offline",
+    "sls-offline": "node --inspect $(npm bin)/sls offline start",
     "offline": "run-p proxy http-server sls-offline"
   },
   "author": "",
