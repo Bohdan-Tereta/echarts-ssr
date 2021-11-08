@@ -22,7 +22,7 @@ const config = {
     ssr: true,
     paths: {
       // base: '/dev/sveltekit',
-      assets: 'http://127.0.0.1:5500/functions/sveltekit/my-app/.vercel_build_output/static'
+      // assets: 'http://127.0.0.1:5500/functions/sveltekit/my-app/.vercel_build_output/static'
       //assets: 'http://127.0.0.1:5500/functions/sveltekit/my-app/adapter/content/static' // vercel
       //assets: 'http://127.0.0.1:5500/functions/sveltekit/my-app/.svelte-kit/output/client'
     }
