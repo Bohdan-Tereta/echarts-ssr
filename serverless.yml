@@ -65,20 +65,21 @@ provider:
 
 package:
   individually: true
-  exclude:
-    - "*/**"
+  include:
+    - "!*/**"
 
 plugins:
-  # - serverless-plugin-common-excludes
+  - serverless-plugin-common-excludes
   # - serverless-plugin-include-dependencies
   - serverless-offline
   - serverless-single-page-app-plugin
+  #- serverless-print-resolved-plugin
   # - serverless-s3-remover
 
 layers:
   canvas:
     package:
-      artifact: ./output/node_modules.zip
+      artifact: "./output/node_modules.zip"
 
 functions:
   hello:
@@ -220,7 +221,37 @@ resources:
               ## In case you want to restrict the bucket access use S3OriginConfig and remove CustomOriginConfig
               # S3OriginConfig:
               #   OriginAccessIdentity: origin-access-identity/cloudfront/E127EXAMPLE51Z
-          Enabled: 'true'
+
+            - DomainName: 
+                Fn::Join: [
+                  "", [
+                    { "Ref": "ApiGatewayRestApi" },
+                    ".execute-api.",
+                    { "Ref": "AWS::Region" },
+                    ".amazonaws.com"
+                  ]
+                ]
+              OriginPath: /dev/sveltekit  
+              # gktn50vdec.execute-api.us-east-1.amazonaws.com
+              ## An identifier for the origin which must be unique within the distribution
+              Id: WebApp1
+              CustomOriginConfig:
+                HTTPPort: 80
+                HTTPSPort: 443
+                OriginProtocolPolicy: https-only
+              ## In case you want to restrict the bucket access use S3OriginConfig and remove CustomOriginConfig
+              # S3OriginConfig:
+              #   OriginAccessIdentity: origin-access-identity/cloudfront/E127EXAMPLE51Z
+          Enabled: true
+          CacheBehaviors:
+            - PathPattern: "/_app/*"
+              TargetOriginId: "WebApp"
+              ViewerProtocolPolicy: "redirect-to-https"
+              CachePolicyId: "658327ea-f89d-4fab-a63d-7e88639e58f6"
+            - PathPattern: "/*"
+              TargetOriginId: "WebApp1"
+              ViewerProtocolPolicy: "redirect-to-https"
+              CachePolicyId: "2e54312d-136d-493c-8eb9-b001f22f67d2"
           ## Uncomment the following section in case you are using a custom domain
           # Aliases:
           # - mysite.example.com
@@ -244,19 +275,21 @@ resources:
             TargetOriginId: WebApp
             ## Defining if and how the QueryString and Cookies are forwarded to the origin which in this case is S3
             ForwardedValues:
-              QueryString: 'false'
+              QueryString: false
               Cookies:
                 Forward: none
             ## The protocol that users can use to access the files in the origin. To allow HTTP use `allow-all`
             ViewerProtocolPolicy: redirect-to-https
           ## The certificate to use when viewers use HTTPS to request objects.
           ViewerCertificate:
-            CloudFrontDefaultCertificate: 'true'
+            CloudFrontDefaultCertificate: true
           ## Uncomment the following section in case you want to enable logging for CloudFront requests
           # Logging:
           #   IncludeCookies: 'false'
           #   Bucket: mylogs.s3.amazonaws.com
           #   Prefix: myprefix
+    ApiGatewayRestApi:
+      Type: AWS::ApiGateway::RestApi
 
   ## In order to print out the hosted domain via `serverless info` we need to define the DomainName output for CloudFormation
   Outputs:
@@ -266,6 +299,14 @@ resources:
     WebAppCloudFrontDistributionOutput:
       Value:
         'Fn::GetAtt': [ WebAppCloudFrontDistribution, DomainName ]
+    ApiGatewayRestApi:
+      Value:
+        Ref: ApiGatewayRestApi
+    apiGatewayRestApiRootResourceId:
+      Value:
+        Fn::GetAtt:
+          - ApiGatewayRestApi
+          - RootResourceId
 
 custom:
   s3LocalPath: functions/sveltekit/my-app/.vercel_build_output/static

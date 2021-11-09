@@ -103,3 +103,9 @@ run `Launch via NPM` in vscode
 3001 - app
 3000/dev/sveltekit - lambdas
 8081 - static
+
+serverless syncToS3
+sls bucketInfo
+sls domainInfo
+
+ aws s3 rm s3:echarts-ssr-dev-webapps3bucket-1576pjtx3xi6u --recursive
