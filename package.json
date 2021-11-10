@@ -22,6 +22,7 @@
     "serverless-offline": "^8.2.0",
     "serverless-plugin-common-excludes": "^4.0.0",
     "serverless-plugin-include-dependencies": "^5.0.0",
+    "serverless-print-resolved-plugin": "^0.0.8",
     "serverless-s3-remover": "^0.6.0",
     "serverless-single-page-app-plugin": "^1.0.4"
   }

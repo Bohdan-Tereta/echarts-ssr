@@ -2,7 +2,7 @@ const echarts = require("echarts");
 const { createCanvas } = require("canvas");
 const { JSDOM } = require("jsdom");
 
-module.exports.getChart = function getChart() {
+module.exports.getChart = function getChart(option) {
   echarts.setCanvasCreator(() => {
     return createCanvas(200, 200);
   });
@@ -19,7 +19,7 @@ module.exports.getChart = function getChart() {
   const chart = echarts.init(root, null, {
     renderer: "svg",
   });
-  chart.setOption({
+  chart.setOption(option || {
     title: {
       text: "ECharts 入门示例",
     },

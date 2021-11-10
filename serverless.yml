@@ -200,6 +200,19 @@ resources:
                   ]
                 ]
     ## Specifying the CloudFront Distribution to server your Web Application
+    OriginRequestPolicy:
+      Type: AWS::CloudFront::OriginRequestPolicy
+      Properties:
+        OriginRequestPolicyConfig:
+            CookiesConfig:
+                    CookieBehavior: all
+            HeadersConfig:
+                    HeaderBehavior: whitelist
+                    Headers:
+                      - Accept
+            Name: Lambda
+            QueryStringsConfig:
+                    QueryStringBehavior: all
     WebAppCloudFrontDistribution:
       Type: AWS::CloudFront::Distribution
       Properties:
@@ -247,11 +260,28 @@ resources:
             - PathPattern: "/_app/*"
               TargetOriginId: "WebApp"
               ViewerProtocolPolicy: "redirect-to-https"
+              # https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/using-managed-cache-policies.html
+              # CachingOptimized 1-86400-365*86400 seconds TTL no cookies no queries
               CachePolicyId: "658327ea-f89d-4fab-a63d-7e88639e58f6"
             - PathPattern: "/*"
               TargetOriginId: "WebApp1"
               ViewerProtocolPolicy: "redirect-to-https"
-              CachePolicyId: "2e54312d-136d-493c-8eb9-b001f22f67d2"
+              # https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/using-managed-cache-policies.html
+              # Caching disabled, TODO: define proper caching policy, do not add Host header here or you'll get issues
+              CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad
+              # https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/using-managed-origin-request-policies.html
+              # All URL query strings, HTTP headers, and cookies that you include in the cache key (using a cache policy) are automatically included in origin requests. Use the origin request policy to specify the information that you want to include in origin requests, but not include in the cache key.
+              # AllViewer: all cookies, all queryStrings, only Accept header, no Host Header (as it breaks Gate) TODO: add Authorize and other headers, maybe remove some cookies
+              OriginRequestPolicyId: { "Ref": "OriginRequestPolicy" }
+              AllowedMethods:
+                - DELETE
+                - GET
+                - HEAD
+                - OPTIONS
+                - PATCH
+                - POST
+                - PUT
+
           ## Uncomment the following section in case you are using a custom domain
           # Aliases:
           # - mysite.example.com
@@ -261,7 +291,9 @@ resources:
           CustomErrorResponses:
             - ErrorCode: 404
               ResponseCode: 200
-              ResponsePagePath: /index.html
+                # hack, gateway doesn't allow to access / path so point to any other existing app path
+              ResponsePagePath: /about
+
           DefaultCacheBehavior:
             AllowedMethods:
               - DELETE
@@ -307,6 +339,9 @@ resources:
         Fn::GetAtt:
           - ApiGatewayRestApi
           - RootResourceId
+    OriginRequestPolicy:
+      Value:
+        'Ref': OriginRequestPolicy
 
 custom:
   s3LocalPath: functions/sveltekit/my-app/.vercel_build_output/static

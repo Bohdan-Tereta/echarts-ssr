@@ -22,7 +22,7 @@ const config = {
       esbuild(defaultOptions) {
         return {
           ...defaultOptions,
-          minify: true,
+          minify: false,
           sourcemap: true
         };
       }

@@ -7,7 +7,7 @@ module.exports.getChart = async (event) => {
     statusCode: 200,
     body: JSON.stringify(
       {
-        message: getChart(),
+        message: getChart(JSON.parse(event.body)),
         input: event,
       },
       null,
