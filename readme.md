@@ -104,8 +104,49 @@ run `Launch via NPM` in vscode
 3000/dev/sveltekit - lambdas
 8081 - static
 
+sls deploy
+sls domainInfo
+
+sls syncToS3
+sls bucketInfo
+sls domainInfo
+
+
+
+
 serverless syncToS3
 sls bucketInfo
 sls domainInfo
 
- aws s3 rm s3:echarts-ssr-dev-webapps3bucket-1576pjtx3xi6u --recursive
+ aws s3 rm s3://echarts-ssr-dev-webapps3bucket-1576pjtx3xi6u --recursive
+
+aws cloudfront list-distributions | grep "d2ylbbabg24fpg.cloudfront.net" | awk '{print $6}' 
+create-invalidation distribution-id E7C7ZGCKIA171 --paths /*
+aws cloudfront create-invalidation --distribution-id E7C7ZGCKIA171 --paths "/*"
+
+
+#!/bin/bash
+
+CLOUDFRONT_DOMAIN="mydomain.com" # change this
+
+# Get Distribution ID (requires node.js to be installed)
+DISTRIBUTION_ID=$(aws cloudfront list-distributions --query "DistributionList.Items[].{Id: Id, DomainName: DomainName, OriginDomainName: Origins.Items[0].DomainName }[?contains(OriginDomainName, 'd2ylbbabg24fpg.cloudfront.net')] | [0]" | node -pe "JSON.parse(require('fs').readFileSync('/dev/stdin').toString()).Id")
+
+# Invalidate cache
+echo "Invalidating CloudFront distribution $DISTRIBUTION_ID ..."
+aws cloudfront create-invalidation --distribution-id=$DISTRIBUTION_ID --paths '/*'
+echo "Invalidation requested."
+
+#!/bin/bash
+
+CLOUDFRONT_DOMAIN="mydomain.com" # change this
+
+# Get Distribution ID (requires node.js to be installed)
+DISTRIBUTION_ID=$(aws cloudfront list-distributions --query "DistributionList.Items[].{Id: Id, DomainName: DomainName, OriginDomainName: Origins.Items[0].DomainName }[?contains(OriginDomainName, '$CLOUDFRONT_DOMAIN')] | [0]" | node -pe "JSON.parse(require('fs').readFileSync('/dev/stdin').toString()).Id")
+
+# Invalidate cache
+echo "Invalidating CloudFront distribution $DISTRIBUTION_ID ..."
+aws cloudfront create-invalidation --distribution-id=$DISTRIBUTION_ID --paths '/*'
+echo "Invalidation requested."
+
+

@@ -75,6 +75,7 @@ plugins:
   - serverless-single-page-app-plugin
   #- serverless-print-resolved-plugin
   # - serverless-s3-remover
+  - serverless-cloudfront-invalidate
 
 layers:
   canvas:
@@ -199,8 +200,25 @@ resources:
                     "/*"
                   ]
                 ]
-    ## Specifying the CloudFront Distribution to server your Web Application
-    OriginRequestPolicy:
+    CachePolicyLambda:
+      Type: AWS::CloudFront::CachePolicy
+      Properties:
+        CachePolicyConfig:
+          DefaultTTL: 2
+          MaxTTL: 600
+          MinTTL: 2
+          Name: Lambda
+          ParametersInCacheKeyAndForwardedToOrigin:
+            CookiesConfig:
+              CookieBehavior: all
+            EnableAcceptEncodingGzip: true
+            HeadersConfig:
+              HeaderBehavior: whitelist
+              Headers:
+                - Authorization 
+            QueryStringsConfig:
+              QueryStringBehavior: all
+    OriginRequestPolicyLambda:
       Type: AWS::CloudFront::OriginRequestPolicy
       Properties:
         OriginRequestPolicyConfig:
@@ -210,9 +228,12 @@ resources:
                     HeaderBehavior: whitelist
                     Headers:
                       - Accept
+                      - Referer
+                      - User-Agent
             Name: Lambda
             QueryStringsConfig:
                     QueryStringBehavior: all
+    ## Specifying the CloudFront Distribution to server your Web Application
     WebAppCloudFrontDistribution:
       Type: AWS::CloudFront::Distribution
       Properties:
@@ -226,7 +247,7 @@ resources:
                   ]
                 ]
               ## An identifier for the origin which must be unique within the distribution
-              Id: WebApp
+              Id: s3
               CustomOriginConfig:
                 HTTPPort: 80
                 HTTPSPort: 443
@@ -247,7 +268,7 @@ resources:
               OriginPath: /dev/sveltekit  
               # gktn50vdec.execute-api.us-east-1.amazonaws.com
               ## An identifier for the origin which must be unique within the distribution
-              Id: WebApp1
+              Id: ssr
               CustomOriginConfig:
                 HTTPPort: 80
                 HTTPSPort: 443
@@ -257,22 +278,23 @@ resources:
               #   OriginAccessIdentity: origin-access-identity/cloudfront/E127EXAMPLE51Z
           Enabled: true
           CacheBehaviors:
+          # TODO: add paths to favicon and robots.txt
             - PathPattern: "/_app/*"
-              TargetOriginId: "WebApp"
+              TargetOriginId: "s3"
               ViewerProtocolPolicy: "redirect-to-https"
               # https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/using-managed-cache-policies.html
               # CachingOptimized 1-86400-365*86400 seconds TTL no cookies no queries
               CachePolicyId: "658327ea-f89d-4fab-a63d-7e88639e58f6"
             - PathPattern: "/*"
-              TargetOriginId: "WebApp1"
+              TargetOriginId: "ssr"
               ViewerProtocolPolicy: "redirect-to-https"
               # https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/using-managed-cache-policies.html
               # Caching disabled, TODO: define proper caching policy, do not add Host header here or you'll get issues
-              CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad
+              CachePolicyId: {"Ref": "CachePolicyLambda"}
               # https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/using-managed-origin-request-policies.html
               # All URL query strings, HTTP headers, and cookies that you include in the cache key (using a cache policy) are automatically included in origin requests. Use the origin request policy to specify the information that you want to include in origin requests, but not include in the cache key.
-              # AllViewer: all cookies, all queryStrings, only Accept header, no Host Header (as it breaks Gate) TODO: add Authorize and other headers, maybe remove some cookies
-              OriginRequestPolicyId: { "Ref": "OriginRequestPolicy" }
+              # No Host Header (as it breaks Gate)
+              OriginRequestPolicyId: { "Ref": "OriginRequestPolicyLambda" }
               AllowedMethods:
                 - DELETE
                 - GET
@@ -285,11 +307,15 @@ resources:
           ## Uncomment the following section in case you are using a custom domain
           # Aliases:
           # - mysite.example.com
-          DefaultRootObject: index.html
+          # DefaultRootObject: index.html
           ## Since the Single Page App is taking care of the routing we need to make sure ever path is served with index.html
           ## The only exception are files that actually exist e.h. app.js, reset.css
           CustomErrorResponses:
             - ErrorCode: 404
+              ResponseCode: 200
+                # hack, gateway doesn't allow to access / path so point to any other existing app path
+              ResponsePagePath: /about
+            - ErrorCode: 403
               ResponseCode: 200
                 # hack, gateway doesn't allow to access / path so point to any other existing app path
               ResponsePagePath: /about
@@ -304,7 +330,7 @@ resources:
               - POST
               - PUT
             ## The origin id defined above
-            TargetOriginId: WebApp
+            TargetOriginId: s3
             ## Defining if and how the QueryString and Cookies are forwarded to the origin which in this case is S3
             ForwardedValues:
               QueryString: false
@@ -339,12 +365,26 @@ resources:
         Fn::GetAtt:
           - ApiGatewayRestApi
           - RootResourceId
-    OriginRequestPolicy:
+    OriginRequestPolicyLambda:
       Value:
-        'Ref': OriginRequestPolicy
+        'Ref': OriginRequestPolicyLambda
+    CachePolicyLambda:
+      Value:
+        'Ref': CachePolicyLambda
+    WebAppCloudFrontDistribution:
+      Value:
+        Ref: WebAppCloudFrontDistribution
 
 custom:
   s3LocalPath: functions/sveltekit/my-app/.vercel_build_output/static
+  cloudfrontInvalidate:
+    - distributionId: 
+        Value:
+          Ref: WebAppCloudFrontDistribution
+      autoInvalidate: true # Can be set to false to avoid automatic invalidation after the deployment. Useful if you want to manually trigger the invalidation later. Defaults to true.
+      items: # one or more paths required
+        - "/*"
+
   # remover:
   #   buckets: 
   #     - charts-ssr-dev-webapps3bucket-1cnwuy8g4tgbi
